@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LUCEN</title>
+
+<style>
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  min-height: 100vh;
+  background:
+    radial-gradient(circle at 50% 25%, rgba(0,180,255,.18), transparent 30%),
+    radial-gradient(circle at 20% 80%, rgba(80,0,255,.12), transparent 35%),
+    #03050b;
+  color: #eafaff;
+  font-family: Arial, sans-serif;
+}
+
+.app {
+  max-width: 900px;
+  min-height: 100vh;
+  margin: auto;
+  padding: 22px 18px;
+  display: flex;
+  flex-direction: column;
+}
+
+header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.logo {
+  font-size: 28px;
+  font-weight: 800;
+  letter-spacing: 5px;
+  text-shadow: 0 0 15px #00c8ff;
+}
+
+.status {
+  color: #5fffc4;
+  font-size: 11px;
+  letter-spacing: 2px;
+}
+
+.status::before {
+  content: "";
+  display: inline-block;
+  width: 7px;
+  height: 7px;
+  margin-right: 7px;
+  border-radius: 50%;
+  background: #5fffc4;
+  box-shadow: 0 0 12px #5fffc4;
+}
+
+.core-area {
+  height: 280px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.core {
+  width: 175px;
+  height: 175px;
+  border-radius: 50%;
+  border: 2px solid rgba(0,200,255,.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  box-shadow:
+    0 0 25px rgba(0,200,255,.5),
+    inset 0 0 35px rgba(0,200,255,.18);
+  animation: pulse 3s infinite;
+}
+
+.core::before {
+  content: "";
+  position: absolute;
+  width: 125px;
+  height: 125px;
+  border-radius: 50%;
+  border: 1px solid rgba(0,200,255,.4);
+}
+
+.core::after {
+  content: "";
+  position: absolute;
+  width: 75px;
+  height: 75px;
+  border-radius: 50%;
+  background: radial-gradient(circle, white, #00c8ff 35%, transparent 70%);
+  box-shadow: 0 0 35px #00c8ff;
+}
+
+.core-text {
+  position: relative;
+  z-index: 2;
+  font-size: 13px;
+  font-weight: bold;
+  letter-spacing: 4px;
+}
+
+@keyframes pulse {
+  0%,100% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+}
+
+.chat {
+  flex: 1;
+  min-height: 280px;
+  max-height: 45vh;
+  overflow-y: auto;
+  padding: 10px 3px;
+}
+
+.message {
+  max-width: 85%;
+  padding: 14px;
+  margin-bottom: 12px;
+  border-radius: 14px;
+  line-height: 1.5;
+}
+
+.lucen {
+  background: rgba(0,160,255,.08);
+  border: 1px solid rgba(0,200,255,.2);
+}
+
+.user {
+  margin-left: auto;
+  background: rgba(100,100,255,.14);
+  border: 1px solid rgba(120,120,255,.2);
+}
+
+.label {
+  font-size: 10px;
+  letter-spacing: 2px;
+  opacity: .55;
+  margin-bottom: 5px;
+}
+
+.input-area {
+  display: flex;
+  gap: 9px;
+}
+
+input {
+  flex: 1;
+  min-width: 0;
+  padding: 15px;
+  border-radius: 14px;
+  border: 1px solid rgba(0,200,255,.3);
+  outline: none;
+  background: rgba(255,255,255,.05);
+  color: white;
+  font-size: 16px;
+}
+
+button {
+  border: none;
+  border-radius: 14px;
+  padding: 0 18px;
+  background: linear-gradient(135deg, #00bfff, #536dfe);
+  color: white;
+  font-weight: bold;
+}
+
+.voice {
+  width: 100%;
+  height: 48px;
+  margin-top: 10px;
+}
+
+footer {
+  text-align: center;
+  margin-top: 14px;
+  font-size: 9px;
+  letter-spacing: 2px;
+  opacity: .35;
+}
+</style>
+</head>
+
+<body>
+
+<div class="app">
+
+<header>
+  <div class="logo">LUCEN</div>
+  <div class="status">SYSTEM ONLINE</div>
+</header>
+
+<div class="core-area">
+  <div class="core">
+    <div class="core-text">LUCEN</div>
+  </div>
+</div>
+
+<div class="chat" id="chat">
+
+  <div class="message lucen">
+    <div class="label">LUCEN</div>
+    System initialisiert.<br>
+    Guten Abend. Ich bin bereit.
+  </div>
+
+</div>
+
+<div class="input-area">
+
+  <input
+    id="input"
+    type="text"
+    placeholder="Sprich mit LUCEN..."
+  >
+
+  <button onclick="sendMessage()">
+    Senden
+  </button>
+
+</div>
+
+<button class="voice" onclick="startVoice()">
+  🎙️ Sprachmodus aktivieren
+</button>
+
+<footer>
+  LUCEN • PERSONAL AI SYSTEM
+</footer>
+
+</div>
+
+<script>
+
+const input = document.getElementById("input");
+const chat = document.getElementById("chat");
+
+function addMessage(text, type) {
+
+  const message = document.createElement("div");
+  message.className = "message " + type;
+
+  const label = document.createElement("div");
+  label.className = "label";
+  label.textContent = type === "user" ? "DU" : "LUCEN";
+
+  const content = document.createElement("div");
+  content.textContent = text;
+
+  message.appendChild(label);
+  message.appendChild(content);
+
+  chat.appendChild(message);
+  chat.scrollTop = chat.scrollHeight;
+}
+
+function sendMessage() {
+
+  const text = input.value.trim();
+
+  if (!text) return;
+
+  addMessage(text, "user");
+
+  input.value = "";
+
+  setTimeout(function() {
+
+    addMessage(
+      "Ich habe dich verstanden. Meine KI-Verbindung wird als nächstes aktiviert.",
+      "lucen"
+    );
+
+  }, 500);
+}
+
+input.addEventListener("keydown", function(event) {
+
+  if (event.key === "Enter") {
+    sendMessage();
+  }
+
+});
+
+function startVoice() {
+
+  const SpeechRecognition =
+    window.SpeechRecognition ||
+    window.webkitSpeechRecognition;
+
+  if (!SpeechRecognition) {
+
+    addMessage(
+      "Die Spracherkennung wird auf diesem Browser nicht unterstützt.",
+      "lucen"
+    );
+
+    return;
+  }
+
+  const recognition = new SpeechRecognition();
+
+  recognition.lang = "de-DE";
+  recognition.continuous = false;
+  recognition.interimResults = false;
+
+  recognition.onstart = function() {
+
+    addMessage("Ich höre zu...", "lucen");
+
+  };
+
+  recognition.onresult = function(event) {
+
+    const text =
+      event.results[0][0].transcript;
+
+    input.value = text;
+    sendMessage();
+
+  };
+
+  recognition.onerror = function() {
+
+    addMessage(
+      "Die Spracherkennung konnte nicht gestartet werden.",
+      "lucen"
+    );
+
+  };
+
+  recognition.start();
+}
+
+</script>
+
+</body>
+</html>
